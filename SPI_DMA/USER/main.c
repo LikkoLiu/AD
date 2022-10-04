@@ -16,7 +16,7 @@
 //***************************
 //				Pin assign
 //			STM32	 	 ADS1256
-//		GPIOB_Pin_11 --- DRDY
+//		GPIOB_Pin_12 --- DRDY
 //		GPIOA_Pin_4 --- CS
 //		GPIOA_Pin_5 --- SCK
 //		GPIOA_Pin_6 --- DOUT
@@ -32,10 +32,13 @@ int main(void)
 
 	SystemConfiguration();		  //系统初始化
 	USART_Config(USART1, 115200); //串口1初始化，波特率 115200
+	printf("UART_OK\r\n");
+
 	Init_ADS1256_GPIO();		  //初始化ADS1256 GPIO管脚
+	printf("ADS1256_GPIO_OK\r\n");
 	Delay_ms(50);
 	ADS1256_Init();
-
+	printf("ADS1256_OK\r\n");
 	while (1)
 	{
 
