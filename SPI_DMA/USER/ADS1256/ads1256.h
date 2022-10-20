@@ -94,6 +94,8 @@ signed int ADS1256ReadData(unsigned char channel);
 unsigned int ADS1256ReadData_raw(unsigned char channel);
 void ADS1256_Init(void);   //≥ı ºªØADS1256
 void Init_ADS1256_GPIO(void);
+u8 gainChoose(unsigned int volt);
+void gainChange(u8 i);
 
 #endif
 

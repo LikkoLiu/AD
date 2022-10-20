@@ -24,7 +24,9 @@
 int main(void)
 {
 	u8 i = 0;
-	int Adc;
+	u8 GAIN = 0;
+	unsigned int Adc;
+	int Voltdisplay;
 	float Volts;
 
 	SystemConfiguration();		  //系统初始化
@@ -39,12 +41,36 @@ int main(void)
 
 		for (i = 0; i < 8; i++)
 		{
-			Adc = ADS1256ReadData((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+			Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
 
 			/*差分采集方式*/
 			// Adc = ADS1256ReadData( ADS1256_MUXP_AIN0|ADS1256_MUXN_AIN1); //P = AIN0 ,N = AIN1 差分方式*/
 			#if voltDisplay
-				Volts = Adc * 0.000000598;
+				GAIN = gainChoose(Adc);
+				gainChange(GAIN);
+				Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+				if (Adc>0x7FFFFF)           // if MSB=1,
+					Voltdisplay = Adc-0x1000000;       // do 2's complement
+				switch (GAIN)
+				{
+				case 0:
+					Volts = Voltdisplay * 0.000000598;
+					break;
+				case 1:
+					Volts = Voltdisplay * 0.000000298;
+					break;
+				case 2:
+					Volts = Voltdisplay * 0.000000149;
+					break;
+				case 3:
+					Volts = Voltdisplay * 0.000000075;
+					break;
+
+				default:
+					break;
+				}
+
 				printf(" %.4fV  ", Volts);
 				if(i==0)printf("\r\n");
 			#endif
