@@ -5,23 +5,23 @@
 
 
 //***************************
-//		Pin assign	   	
-//			STM32			ADS1256		
+//		Pin assign
+//			STM32			ADS1256
 //		GPIOB_Pin_11 		<--- DRDY
 //		GPIOB_Pin_12 		---> CS
 //		GPIOB_Pin_13 		---> SCK
 //		GPIOB_Pin_14(MISO)  <--- DOUT
 //		GPIOB_Pin_15(MOSI)  ---> DIN
-//***************************	
+//***************************
 
-/*¶Ë¿Ú¶¨Òå*/ 
+/*ï¿½Ë¿Ú¶ï¿½ï¿½ï¿½*/
 
 #define RCC_DRDY			RCC_APB2Periph_GPIOB
 #define PORT_DRDY			GPIOB
-#define PIN_DRDY			GPIO_Pin_11
+#define PIN_DRDY			GPIO_Pin_12
 
-#define PORT_CS				GPIOB
-#define PIN_CS				GPIO_Pin_12
+#define PORT_CS				GPIOA
+#define PIN_CS				GPIO_Pin_4
 
 
 #define CS_0()				GPIO_ResetBits(PORT_CS, PIN_CS);
@@ -34,59 +34,59 @@ void SPI2_Init(void)
  SPI_InitTypeDef  SPI_InitStructure;
  GPIO_InitTypeDef GPIO_InitStructure;
  /****Initial SPI2******************/
- 
- /* Enable SPI2 and GPIOB clocks */
- RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
- RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+ /* Enable SPI2 and GPIOB clocks */
+ RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+ RCC_APB1PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
  /* Configure SPI2 pins: NSS, SCK, MISO and MOSI */
- GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+ GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
- GPIO_Init(GPIOB, &GPIO_InitStructure);
- 
-  /* SPI2 configuration */ 
- SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; //SPI1ÉèÖÃÎªÁ½ÏßÈ«Ë«¹¤
- SPI_InitStructure.SPI_Mode = SPI_Mode_Master;                    //ÉèÖÃSPI2ÎªÖ÷Ä£Ê½
- SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;                  //SPI·¢ËÍ½ÓÊÕ8Î»Ö¡½á¹¹
- SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;                   //´®ÐÐÊ±ÖÓÔÚ²»²Ù×÷Ê±£¬Ê±ÖÓÎªµÍµçÆ½
- SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;                 //µÚÒ»¸öÊ±ÖÓÑØ¿ªÊ¼²ÉÑùÊý¾Ý
- SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;                  //NSSÐÅºÅÓÉÈí¼þ£¨Ê¹ÓÃSSIÎ»£©¹ÜÀí
- SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256; //¶¨Òå²¨ÌØÂÊÔ¤·ÖÆµµÄÖµ:²¨ÌØÂÊÔ¤·ÖÆµÖµÎª8
- SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;       //Êý¾Ý´«Êä´ÓMSBÎ»¿ªÊ¼
- SPI_InitStructure.SPI_CRCPolynomial = 7;         //CRCÖµ¼ÆËãµÄ¶àÏîÊ½
- SPI_Init(SPI2, &SPI_InitStructure);
- /* Enable SPI2  */
- SPI_Cmd(SPI2, ENABLE);  
-}  
+ GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-//³õÊ¼»¯ADS1256 GPIO
+  /* SPI2 configuration */
+ SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; //SPI1ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½È«Ë«ï¿½ï¿½
+ SPI_InitStructure.SPI_Mode = SPI_Mode_Master;                    //ï¿½ï¿½ï¿½ï¿½SPI2Îªï¿½ï¿½Ä£Ê½
+ SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;                  //SPIï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½8Î»Ö¡ï¿½á¹¹
+ SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;                   //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½Îªï¿½Íµï¿½Æ½
+ SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;                 //ï¿½ï¿½Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ø¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;                  //NSSï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½SSIÎ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256; //ï¿½ï¿½ï¿½å²¨ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½Æµï¿½ï¿½Öµ:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ÆµÖµÎª8
+ SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;       //ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ï¿½MSBÎ»ï¿½ï¿½Ê¼
+ SPI_InitStructure.SPI_CRCPolynomial = 7;         //CRCÖµï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Ê?
+ SPI_Init(SPI1, &SPI_InitStructure);
+ /* Enable SPI2  */
+ SPI_Cmd(SPI1, ENABLE);
+}
+
+//ï¿½ï¿½Ê¼ï¿½ï¿½ADS1256 GPIO
 void Init_ADS1256_GPIO(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_DRDY, ENABLE); 
+	RCC_APB2PeriphClockCmd(RCC_DRDY, ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin = PIN_DRDY; 
+	GPIO_InitStructure.GPIO_Pin = PIN_DRDY;
   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
   	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   	GPIO_Init(PORT_DRDY, &GPIO_InitStructure);
-	 //SPI2 NSS 
+	 //SPI2 NSS
 	CS_1();
     GPIO_InitStructure.GPIO_Pin = PIN_CS;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(PORT_CS, &GPIO_InitStructure);
-	 
+
 	SPI2_Init();
 }
 
 
 //-----------------------------------------------------------------//
-//	¹¦    ÄÜ£º  Ä£ÄâSPIÍ¨ÐÅ
-//	Èë¿Ú²ÎÊý: /	·¢ËÍµÄSPIÊý¾Ý
-//	³ö¿Ú²ÎÊý: /	½ÓÊÕµÄSPIÊý¾Ý
-//	È«¾Ö±äÁ¿: /
-//	±¸    ×¢: 	·¢ËÍ½ÓÊÕº¯Êý
+//	ï¿½ï¿½    ï¿½Ü£ï¿½  Ä£ï¿½ï¿½SPIÍ¨ï¿½ï¿½
+//	ï¿½ï¿½Ú²ï¿½ï¿½ï¿?: /	ï¿½ï¿½ï¿½Íµï¿½SPIï¿½ï¿½ï¿½ï¿½
+//	ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½: /	ï¿½ï¿½ï¿½Õµï¿½SPIï¿½ï¿½ï¿½ï¿½
+//	È«ï¿½Ö±ï¿½ï¿½ï¿½: /
+//	ï¿½ï¿½    ×¢: 	ï¿½ï¿½ï¿½Í½ï¿½ï¿½Õºï¿½ï¿½ï¿½
 //-----------------------------------------------------------------//
 unsigned char SPI_WriteByte(unsigned char TxData)
 {
@@ -96,76 +96,79 @@ unsigned char SPI_WriteByte(unsigned char TxData)
   while(SPI_I2S_GetFlagStatus(SPI2,SPI_I2S_FLAG_RXNE)==RESET);
   RxData=SPI_I2S_ReceiveData(SPI2);
   return RxData;
-} 
+}
 
 //-----------------------------------------------------------------//
-//	¹¦    ÄÜ£ºADS1256 Ð´Êý¾Ý
-//	Èë¿Ú²ÎÊý: /
-//	³ö¿Ú²ÎÊý: /
-//	È«¾Ö±äÁ¿: /
-//	±¸    ×¢: ÏòADS1256ÖÐµØÖ·ÎªregaddrµÄ¼Ä´æÆ÷Ð´ÈëÒ»¸ö×Ö½Údatabyte
+//	ï¿½ï¿½    ï¿½Ü£ï¿½ADS1256 Ð´ï¿½ï¿½ï¿½ï¿½
+//	ï¿½ï¿½Ú²ï¿½ï¿½ï¿?: /
+//	ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½: /
+//	È«ï¿½Ö±ï¿½ï¿½ï¿½: /
+//	ï¿½ï¿½    ×¢: ï¿½ï¿½ADS1256ï¿½Ðµï¿½Ö·Îªregaddrï¿½Ä¼Ä´ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½databyte
 //-----------------------------------------------------------------//
 void ADS1256WREG(unsigned char regaddr,unsigned char databyte)
 {
-    
+
 	CS_0();
-	while(ADS1256_DRDY);//µ±ADS1256_DRDYÎªµÍÊ±²ÅÄÜÐ´¼Ä´æÆ÷
-	//Ïò¼Ä´æÆ÷Ð´ÈëÊý¾ÝµØÖ·
+	while(ADS1256_DRDY);//ï¿½ï¿½ADS1256_DRDYÎªï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ä´ï¿½ï¿½ï¿½
+	//ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½Ö?
     SPI_WriteByte(ADS1256_CMD_WREG | (regaddr & 0x0F));
-    //Ð´ÈëÊý¾ÝµÄ¸öÊýn-1
+    //Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ¸ï¿½ï¿½ï¿½n-1
     SPI_WriteByte(0x00);
-    //ÏòregaddrµØÖ·Ö¸ÏòµÄ¼Ä´æÆ÷Ð´ÈëÊý¾Ýdatabyte
+    //ï¿½ï¿½regaddrï¿½ï¿½Ö·Ö¸ï¿½ï¿½Ä¼Ä´ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½databyte
     SPI_WriteByte(databyte);
 	CS_1();
 }
 
 
-//³õÊ¼»¯ADS1256
+//ï¿½ï¿½Ê¼ï¿½ï¿½ADS1256
 void ADS1256_Init(void)
 {
-	//*************×ÔÐ£×¼****************
+	//*************ï¿½ï¿½Ð£×¼****************
+	printf("ADS1256_config_OK\r\n");
    	while(ADS1256_DRDY);
+	printf("ADS1256_config0_OK\r\n");
 	CS_0();
 	SPI_WriteByte(ADS1256_CMD_SELFCAL);
 	while(ADS1256_DRDY);
 	CS_1();
 	//**********************************
-
-	ADS1256WREG(ADS1256_STATUS,0x06);               // ¸ßÎ»ÔÚÇ°¡¢Ê¹ÓÃ»º³å
-//	ADS1256WREG(ADS1256_STATUS,0x04);               // ¸ßÎ»ÔÚÇ°¡¢²»Ê¹ÓÃ»º³å
-
-//	ADS1256WREG(ADS1256_MUX,0x08);                  // ³õÊ¼»¯¶Ë¿ÚA0Îª¡®+¡¯£¬AINCOMÎ»¡®-¡¯
-	ADS1256WREG(ADS1256_ADCON,ADS1256_GAIN_1);                // ·Å´ó±¶Êý1
-	ADS1256WREG(ADS1256_DRATE,ADS1256_DRATE_10SPS);  // Êý¾Ý10sps
-	ADS1256WREG(ADS1256_IO,0x00);               
-
-	//*************×ÔÐ£×¼****************
+	printf("ADS1256_config1_OK\r\n");
+	ADS1256WREG(ADS1256_STATUS,0x06);               // ï¿½ï¿½Î»ï¿½ï¿½Ç°ï¿½ï¿½Ê¹ï¿½Ã»ï¿½ï¿½ï¿½
+//	ADS1256WREG(ADS1256_STATUS,0x04);               // ï¿½ï¿½Î»ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã»ï¿½ï¿½ï¿½
+	printf("ADS1256_config2_OK\r\n");
+//	ADS1256WREG(ADS1256_MUX,0x08);                  // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ë¿ï¿½A0Îªï¿½ï¿½+ï¿½ï¿½ï¿½ï¿½AINCOMÎ»ï¿½ï¿½-ï¿½ï¿½
+	ADS1256WREG(ADS1256_ADCON,ADS1256_GAIN_1);                // ï¿½Å´ï¿½ï¿½ï¿½1
+	ADS1256WREG(ADS1256_DRATE,ADS1256_DRATE_10SPS);  // ï¿½ï¿½ï¿½ï¿½10sps
+	ADS1256WREG(ADS1256_IO,0x00);
+	printf("ADS1256_config3_OK\r\n");
+	//*************ï¿½ï¿½Ð£×¼****************
 	while(ADS1256_DRDY);
 	CS_0();
 	SPI_WriteByte(ADS1256_CMD_SELFCAL);
 	while(ADS1256_DRDY);
-	CS_1(); 
+	CS_1();
+	printf("ADS1256_config4_OK\r\n");
 	//**********************************
 }
 
-//¶ÁÈ¡ADÖµ
-signed int ADS1256ReadData(unsigned char channel)  
+//ï¿½ï¿½È¡ADÖµ
+signed int ADS1256ReadData(unsigned char channel)
 {
 
     unsigned int sum=0;
-	
-	while(ADS1256_DRDY);//µ±ADS1256_DRDYÎªµÍÊ±²ÅÄÜÐ´¼Ä´æÆ÷ 
-	ADS1256WREG(ADS1256_MUX,channel);		//ÉèÖÃÍ¨µÀ
+
+	while(ADS1256_DRDY);//ï¿½ï¿½ADS1256_DRDYÎªï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð´ï¿½Ä´ï¿½ï¿½ï¿½
+	ADS1256WREG(ADS1256_MUX,channel);		//ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
 	CS_0();
 	SPI_WriteByte(ADS1256_CMD_SYNC);
-	SPI_WriteByte(ADS1256_CMD_WAKEUP);	               
+	SPI_WriteByte(ADS1256_CMD_WAKEUP);
 	SPI_WriteByte(ADS1256_CMD_RDATA);
    	sum |= (SPI_WriteByte(0xff) << 16);
 	sum |= (SPI_WriteByte(0xff) << 8);
 	sum |= SPI_WriteByte(0xff);
 	CS_1();
 
-	if (sum>0x7FFFFF)           // if MSB=1, 
+	if (sum>0x7FFFFF)           // if MSB=1,
 	{
 		sum -= 0x1000000;       // do 2's complement
 
