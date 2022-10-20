@@ -112,10 +112,13 @@ void ADS1256WREG(unsigned char regaddr,unsigned char databyte)
 	while(ADS1256_DRDY);//��ADS1256_DRDYΪ��ʱ����д�Ĵ���
 	//��Ĵ���д�����ݵ�ַ
     SPI_WriteByte(ADS1256_CMD_WREG | (regaddr & 0x0F));
+	Delay_us(1);
     //д�����ݵĸ���n-1
     SPI_WriteByte(0x00);
+	Delay_us(1);
     //��regaddr��ַָ��ļĴ���д������databyte
     SPI_WriteByte(databyte);
+	Delay_us(1);
 	CS_1();
 }
 
@@ -127,22 +130,27 @@ void ADS1256_Init(void)
    	while(ADS1256_DRDY);
 	CS_0();
 	SPI_WriteByte(ADS1256_CMD_SELFCAL);
+	Delay_us(1);
 	while(ADS1256_DRDY);
 	CS_1();
 	//**********************************
 
 	ADS1256WREG(ADS1256_STATUS,0x06);               // ��λ��ǰ��ʹ�û���
 //	ADS1256WREG(ADS1256_STATUS,0x04);               // ��λ��ǰ����ʹ�û���
-
+	Delay_us(1);
 //	ADS1256WREG(ADS1256_MUX,0x08);                  // ��ʼ���˿�A0Ϊ��+����AINCOMλ��-��
 	ADS1256WREG(ADS1256_ADCON,ADS1256_GAIN_1);                // �Ŵ���1
+	Delay_us(1);
 	ADS1256WREG(ADS1256_DRATE,ADS1256_DRATE_10SPS);  // ����10sps
+	Delay_us(1);
 	ADS1256WREG(ADS1256_IO,0x00);
+	Delay_us(1);
 
 	//*************��У׼****************
 	while(ADS1256_DRDY);
 	CS_0();
 	SPI_WriteByte(ADS1256_CMD_SELFCAL);
+	Delay_us(1);
 	while(ADS1256_DRDY);
 	CS_1();
 	//**********************************
