@@ -3,7 +3,7 @@
 
 #include "bitband.h"
 
-#define EN_USART_RX         //Ê¹ÄÜ´®¿Ú1½ÓÊÕÖÐ¶Ï
+#define EN_USART_RX         //Ê¹ï¿½Ü´ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 #define EN_USART3_RX
 //#define X0  	PAin(2)
 //#define Y0  	PBout(12)
@@ -11,19 +11,19 @@
 #define LED1		BIT_ADDR(GPIOB_ODR_Addr,0)
 #define LED1_READ	BIT_ADDR(GPIOB_IDR_Addr,0)
 
-#define LED2		BIT_ADDR(GPIOB_ODR_Addr,1)
-#define LED2_READ	BIT_ADDR(GPIOB_IDR_Addr,1)
+#define LED2		BIT_ADDR(GPIOB_ODR_Addr,11)
+#define LED2_READ	BIT_ADDR(GPIOB_IDR_Addr,11)
 
 #define KEY			BIT_ADDR(GPIOB_IDR_Addr,2)
 
 
 
-extern u8 USART_RxDat;       //½ÓÊÕÊý¾Ý
-extern u8 USART_RxFlag;      //½ÓÊÕ±êÖ¾Î»
-void Delay_Init(void);       //ÑÓÊ±³õÊ¼»¯º¯Êý
-void Delay_ms(u16 ms);       //ÑÓÊ±XºÁÃëº¯Êý
-void Delay_us(u32 us);       //ÑÓÊ±XÎ¢Ãîº¯Êý
-void USART_Config(USART_TypeDef* USARTx,u32 Baud);  //´®¿Ú³õÊ¼»¯
+extern u8 USART_RxDat;       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+extern u8 USART_RxFlag;      //ï¿½ï¿½ï¿½Õ±ï¿½Ö¾Î»
+void Delay_Init(void);       //ï¿½ï¿½Ê±ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void Delay_ms(u16 ms);       //ï¿½ï¿½Ê±Xï¿½ï¿½ï¿½ëº¯ï¿½ï¿½
+void Delay_us(u32 us);       //ï¿½ï¿½Ê±XÎ¢ï¿½îº¯ï¿½ï¿½
+void USART_Config(USART_TypeDef* USARTx,u32 Baud);  //ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½
 void RTC_Configuration(void);
 u8 UartSendData(USART_TypeDef* USARTx,u8 ch);
 void UartSendString(USART_TypeDef* USARTx,char *str);

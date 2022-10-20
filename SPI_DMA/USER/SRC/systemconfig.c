@@ -11,20 +11,20 @@
 *******************************************************************************/
 void RCC_Configuration(void)
 {
- 
+
 
 	//使能GPIO时钟
-	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE); 
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE);
 
 	//使能复用功能时钟
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
-	
+
 	//USART1
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	//USART3
 //	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
-	
-					 
+
+
 }
 
 /*******************************************************************************
@@ -36,29 +36,29 @@ void RCC_Configuration(void)
 void GPIO_Configuration(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	
+
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable , ENABLE);//使能SWJ，禁止 JTAG
 
 
 
 
- 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;
+ 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_11;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; 
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 //	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 //	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	
-	
 
-	
+
+
+
 	//串口UART1
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;             //RX
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);  
-                                                
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;              //TX
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -81,7 +81,7 @@ void NVIC_Configuration(void)
 	NVIC_InitTypeDef NVIC_InitStructure;
 
 	/*串口USART1中断配置 */
-#ifdef EN_USART_RX	
+#ifdef EN_USART_RX
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -89,7 +89,7 @@ void NVIC_Configuration(void)
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 #endif
 
-	/*串口USART3中断配置 */	
+	/*串口USART3中断配置 */
 
 //	NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn; 	//设置串口3中断
 //  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
@@ -103,10 +103,10 @@ void NVIC_Configuration(void)
 
 
 void SystemConfiguration(void)
-{	
-	RCC_Configuration(); 
+{
+	RCC_Configuration();
 
-	GPIO_Configuration(); 	
+	GPIO_Configuration();
 
 	NVIC_Configuration();
 

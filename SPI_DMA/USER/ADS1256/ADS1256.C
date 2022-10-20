@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "air32f10x.h"
 #include "ADS1256.h"
-
+#include "common.h"
 
 //***************************
 //		Pin assign
@@ -18,10 +18,10 @@
 
 #define RCC_DRDY			RCC_APB2Periph_GPIOB
 #define PORT_DRDY			GPIOB
-#define PIN_DRDY			GPIO_Pin_12
+#define PIN_DRDY			GPIO_Pin_7
 
-#define PORT_CS				GPIOA
-#define PIN_CS				GPIO_Pin_4
+#define PORT_CS				GPIOB
+#define PIN_CS				GPIO_Pin_12
 
 
 #define CS_0()				GPIO_ResetBits(PORT_CS, PIN_CS);
@@ -36,14 +36,14 @@ void SPI2_Init(void)
  /****Initial SPI2******************/
 
  /* Enable SPI2 and GPIOB clocks */
- RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+ RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
- RCC_APB1PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+ RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
  /* Configure SPI2 pins: NSS, SCK, MISO and MOSI */
- GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+ GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
- GPIO_Init(GPIOA, &GPIO_InitStructure);
+ GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   /* SPI2 configuration */
  SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; //SPI1����Ϊ����ȫ˫��
@@ -52,12 +52,12 @@ void SPI2_Init(void)
  SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;                   //����ʱ���ڲ�����ʱ��ʱ��Ϊ�͵�ƽ
  SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;                 //��һ��ʱ���ؿ�ʼ��������
  SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;                  //NSS�ź���������ʹ��SSIλ������
- SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256; //���岨����Ԥ��Ƶ��ֵ:������Ԥ��ƵֵΪ8
+ SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64; //���岨����Ԥ��Ƶ��ֵ:������Ԥ��ƵֵΪ8
  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;       //���ݴ����MSBλ��ʼ
- SPI_InitStructure.SPI_CRCPolynomial = 7;         //CRCֵ����Ķ����?
- SPI_Init(SPI1, &SPI_InitStructure);
+ SPI_InitStructure.SPI_CRCPolynomial = 7;         //CRCֵ����Ķ���ʽ
+ SPI_Init(SPI2, &SPI_InitStructure);
  /* Enable SPI2  */
- SPI_Cmd(SPI1, ENABLE);
+ SPI_Cmd(SPI2, ENABLE);
 }
 
 //��ʼ��ADS1256 GPIO
@@ -83,7 +83,7 @@ void Init_ADS1256_GPIO(void)
 
 //-----------------------------------------------------------------//
 //	��    �ܣ�  ģ��SPIͨ��
-//	��ڲ���?: /	���͵�SPI����
+//	��ڲ���: /	���͵�SPI����
 //	���ڲ���: /	���յ�SPI����
 //	ȫ�ֱ���: /
 //	��    ע: 	���ͽ��պ���
@@ -100,7 +100,7 @@ unsigned char SPI_WriteByte(unsigned char TxData)
 
 //-----------------------------------------------------------------//
 //	��    �ܣ�ADS1256 д����
-//	��ڲ���?: /
+//	��ڲ���: /
 //	���ڲ���: /
 //	ȫ�ֱ���: /
 //	��    ע: ��ADS1256�е�ַΪregaddr�ļĴ���д��һ���ֽ�databyte
@@ -110,7 +110,7 @@ void ADS1256WREG(unsigned char regaddr,unsigned char databyte)
 
 	CS_0();
 	while(ADS1256_DRDY);//��ADS1256_DRDYΪ��ʱ����д�Ĵ���
-	//��Ĵ���д�����ݵ��?
+	//��Ĵ���д�����ݵ�ַ
     SPI_WriteByte(ADS1256_CMD_WREG | (regaddr & 0x0F));
     //д�����ݵĸ���n-1
     SPI_WriteByte(0x00);
@@ -124,30 +124,27 @@ void ADS1256WREG(unsigned char regaddr,unsigned char databyte)
 void ADS1256_Init(void)
 {
 	//*************��У׼****************
-	printf("ADS1256_config_OK\r\n");
    	while(ADS1256_DRDY);
-	printf("ADS1256_config0_OK\r\n");
 	CS_0();
 	SPI_WriteByte(ADS1256_CMD_SELFCAL);
 	while(ADS1256_DRDY);
 	CS_1();
 	//**********************************
-	printf("ADS1256_config1_OK\r\n");
+
 	ADS1256WREG(ADS1256_STATUS,0x06);               // ��λ��ǰ��ʹ�û���
 //	ADS1256WREG(ADS1256_STATUS,0x04);               // ��λ��ǰ����ʹ�û���
-	printf("ADS1256_config2_OK\r\n");
+
 //	ADS1256WREG(ADS1256_MUX,0x08);                  // ��ʼ���˿�A0Ϊ��+����AINCOMλ��-��
 	ADS1256WREG(ADS1256_ADCON,ADS1256_GAIN_1);                // �Ŵ���1
 	ADS1256WREG(ADS1256_DRATE,ADS1256_DRATE_10SPS);  // ����10sps
 	ADS1256WREG(ADS1256_IO,0x00);
-	printf("ADS1256_config3_OK\r\n");
+
 	//*************��У׼****************
 	while(ADS1256_DRDY);
 	CS_0();
 	SPI_WriteByte(ADS1256_CMD_SELFCAL);
 	while(ADS1256_DRDY);
 	CS_1();
-	printf("ADS1256_config4_OK\r\n");
 	//**********************************
 }
 
@@ -163,9 +160,11 @@ signed int ADS1256ReadData(unsigned char channel)
 	SPI_WriteByte(ADS1256_CMD_SYNC);
 	SPI_WriteByte(ADS1256_CMD_WAKEUP);
 	SPI_WriteByte(ADS1256_CMD_RDATA);
+	Delay_us(2);
    	sum |= (SPI_WriteByte(0xff) << 16);
 	sum |= (SPI_WriteByte(0xff) << 8);
 	sum |= SPI_WriteByte(0xff);
+	Delay_us(2);
 	CS_1();
 
 	if (sum>0x7FFFFF)           // if MSB=1,
@@ -175,6 +174,4 @@ signed int ADS1256ReadData(unsigned char channel)
 	}
     return sum;
 }
-
-
 

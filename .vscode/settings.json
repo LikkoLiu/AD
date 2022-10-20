@@ -1,6 +1,8 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "ADS1256.C": "cpp"
+        "ADS1256.C": "cpp",
+        "air32f10x.h": "c",
+        "common.h": "c"
     }
 }

@@ -6,9 +6,9 @@
 #include "common.h"
 #include "ads1256.h"
 
-#define LED1 BIT_ADDR(GPIOB_ODR_Addr, 0)
-#define LED2 BIT_ADDR(GPIOB_ODR_Addr, 1)
-#define KEY BIT_ADDR(GPIOB_IDR_Addr, 2)
+#define LED1 BIT_ADDR(GPIOB_ODR_Addr, 10)
+#define LED2 BIT_ADDR(GPIOB_ODR_Addr, 11)
+// #define KEY BIT_ADDR(GPIOB_IDR_Addr, 2)
 
 // PA9  -----> Txd1
 // PA10 -----> Rxd1
@@ -16,11 +16,11 @@
 //***************************
 //				Pin assign
 //			STM32	 	 ADS1256
-//		GPIOB_Pin_12 --- DRDY
-//		GPIOA_Pin_4 --- CS
-//		GPIOA_Pin_5 --- SCK
-//		GPIOA_Pin_6 --- DOUT
-//		GPIOA_Pin_7 --- DIN
+//		GPIOB_Pin_11 --- DRDY
+//		GPIOB_Pin_12 --- CS
+//		GPIOB_Pin_13 --- SCK
+//		GPIOB_Pin_14 --- DOUT
+//		GPIOB_Pin_15 --- DIN
 //***************************
 
 int main(void)
@@ -32,13 +32,11 @@ int main(void)
 
 	SystemConfiguration();		  //系统初始化
 	USART_Config(USART1, 115200); //串口1初始化，波特率 115200
-	printf("UART_OK\r\n");
-
+	printf("OK\r\n");
 	Init_ADS1256_GPIO();		  //初始化ADS1256 GPIO管脚
-	printf("ADS1256_GPIO_OK\r\n");
 	Delay_ms(50);
 	ADS1256_Init();
-	printf("ADS1256_OK\r\n");
+	printf("OK\r\n");
 	while (1)
 	{
 
@@ -57,5 +55,6 @@ int main(void)
 		}
 		// Delay_ms(100);
 		printf("\r\n");
+
 	}
 }
