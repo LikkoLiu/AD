@@ -137,14 +137,10 @@ void ADS1256_Init(void)
 
 	ADS1256WREG(ADS1256_STATUS,0x06);               // ��λ��ǰ��ʹ�û���
 //	ADS1256WREG(ADS1256_STATUS,0x04);               // ��λ��ǰ����ʹ�û���
-	Delay_us(1);
 //	ADS1256WREG(ADS1256_MUX,0x08);                  // ��ʼ���˿�A0Ϊ��+����AINCOMλ��-��
 	ADS1256WREG(ADS1256_ADCON,ADS1256_GAIN_1);                // �Ŵ���1
-	Delay_us(1);
-	ADS1256WREG(ADS1256_DRATE,ADS1256_DRATE_10SPS);  // ����10sps
-	Delay_us(1);
+	ADS1256WREG(ADS1256_DRATE,ADS1256_DRATE_15SPS);  // ����10sps
 	ADS1256WREG(ADS1256_IO,0x00);
-	Delay_us(1);
 
 	//*************��У׼****************
 	while(ADS1256_DRDY);
@@ -180,6 +176,28 @@ signed int ADS1256ReadData(unsigned char channel)
 		sum -= 0x1000000;       // do 2's complement
 
 	}
+    return sum;
+}
+
+//��ȡADֵ
+unsigned int ADS1256ReadData_raw(unsigned char channel)
+{
+
+    unsigned int sum=0;
+
+	while(ADS1256_DRDY);//��ADS1256_DRDYΪ��ʱ����д�Ĵ���
+	ADS1256WREG(ADS1256_MUX,channel);		//����ͨ��
+	CS_0();
+	SPI_WriteByte(ADS1256_CMD_SYNC);
+	SPI_WriteByte(ADS1256_CMD_WAKEUP);
+	SPI_WriteByte(ADS1256_CMD_RDATA);
+	Delay_us(2);
+   	sum |= (SPI_WriteByte(0xff) << 16);
+	sum |= (SPI_WriteByte(0xff) << 8);
+	sum |= SPI_WriteByte(0xff);
+	Delay_us(2);
+	CS_1();
+
     return sum;
 }
 
