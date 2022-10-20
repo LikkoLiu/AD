@@ -6,7 +6,7 @@
 #include "common.h"
 #include "ads1256.h"
 
-#define LED1 BIT_ADDR(GPIOB_ODR_Addr, 10)
+
 #define LED2 BIT_ADDR(GPIOB_ODR_Addr, 11)
 // #define KEY BIT_ADDR(GPIOB_IDR_Addr, 2)
 
@@ -16,7 +16,7 @@
 //***************************
 //				Pin assign
 //			STM32	 	 ADS1256
-//		GPIOB_Pin_11 --- DRDY
+//		GPIOB_Pin_7 --- DRDY
 //		GPIOB_Pin_12 --- CS
 //		GPIOB_Pin_13 --- SCK
 //		GPIOB_Pin_14 --- DOUT
@@ -32,11 +32,11 @@ int main(void)
 
 	SystemConfiguration();		  //系统初始化
 	USART_Config(USART1, 115200); //串口1初始化，波特率 115200
-	printf("OK\r\n");
+
 	Init_ADS1256_GPIO();		  //初始化ADS1256 GPIO管脚
 	Delay_ms(50);
 	ADS1256_Init();
-	printf("OK\r\n");
+
 	while (1)
 	{
 
