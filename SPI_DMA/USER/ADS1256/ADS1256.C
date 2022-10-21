@@ -209,7 +209,7 @@ unsigned int ADS1256ReadData_raw(unsigned char channel)
 
 u8 gainChoose(unsigned int volt)
 {
-	u8 gainval=0;
+	u8 gainval = 0;
 	signed int val = 0;
 	if (volt <= 0x7FFFFF)
 	{
@@ -226,7 +226,7 @@ u8 gainChoose(unsigned int volt)
 
 	else
 	{
-		val = volt-0x1000000;
+		val = volt - 0x1000000;
 		if (val < -3355443)
 			gainval = 0;
 		else if (val >= -3355443 && val < -1677721)
@@ -253,4 +253,58 @@ void gainChange(u8 i)
 	while (ADS1256_DRDY)
 		;
 	CS_1();
+}
+
+void autoGainread()
+{
+	u8 i = 0;
+	u8 GAIN = 0;
+	unsigned int Adc = 0;
+	unsigned int Adc_arr[8] = 0;
+	signed int Voltdisplay = 0;
+	float Volts;
+	gainChange(0);
+	ADS1256ReadData_raw(0 | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+	for (i = 0; i < 8; i++)
+	{
+		Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+		Adc_arr[i - 1] = Adc;
+	}
+	Adc = ADS1256ReadData_raw(0 | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+	Adc_arr[7] = Adc;
+
+	for (i = 0; i < 8; i++)
+	{
+		GAIN = gainChoose(Adc_arr[i]);
+		gainChange(GAIN);
+		ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM);
+		Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+		if (Adc > 0x7FFFFF) // if MSB=1,
+			Voltdisplay = (signed int)(Adc - 0x1000000);
+		else
+			Voltdisplay = (signed int)(Adc);
+		switch (GAIN)
+		{
+		case 0:
+			Volts = Voltdisplay * 0.000000598;
+			break;
+		case 1:
+			Volts = Voltdisplay * 0.000000298;
+			break;
+		case 2:
+			Volts = Voltdisplay * 0.000000149;
+			break;
+		case 3:
+			Volts = Voltdisplay * 0.000000075;
+			break;
+
+		default:
+			printf("ERROR");
+		}
+
+		printf(" %.4fV_%dG  ", Volts, GAIN);
+	}
+	printf("\r\n");
 }
