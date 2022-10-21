@@ -209,32 +209,35 @@ unsigned int ADS1256ReadData_raw(unsigned char channel)
 
 u8 gainChoose(unsigned int volt)
 {
-	u8 gainval;
+	u8 gainval=0;
 	signed int val = 0;
-	if (volt < 0x7FFFFF)
+	if (volt <= 0x7FFFFF)
 	{
 		if (volt > 3355443)
 			gainval = 0;
-		if (volt <= 3355443 && volt > 1677721)
+		else if (volt <= 3355443 && volt > 1677721)
 			gainval = 1;
-		if (volt <= 1677721 && volt > 838860)
+		else if (volt <= 1677721 && volt > 838860)
 			gainval = 2;
 		else
 			gainval = 3;
+		// printf(" @ GAIN === %d\r\n  ",gainval);
 	}
+
 	else
 	{
 		val = volt-0x1000000;
-		if (volt < -3355443)
+		if (val < -3355443)
 			gainval = 0;
-		if (volt >= -3355443 && volt < -1677721)
+		else if (val >= -3355443 && val < -1677721)
 			gainval = 1;
-		if (volt >= -1677721 && volt < -838860)
+		else if (val >= -1677721 && val < -838860)
 			gainval = 2;
 		else
 			gainval = 3;
-
+		// printf(" @ GAIN === %d\r\n  ",gainval);
 	}
+
 	return gainval;
 }
 
