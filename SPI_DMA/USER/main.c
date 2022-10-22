@@ -19,10 +19,11 @@ u8 SG_unAUTO_single_flag = 0;
 
 u8 unAUTO_gain_sta = 0;
 u8 channel_sta = 8;
+u8 print_Format;
 
 // PA9  -----> Txd1
 // PA10 -----> Rxd1
-
+// PB3 -----> KeyIO
 //***************************
 //				Pin assign
 //			STM32	 	 ADS1256
@@ -67,7 +68,7 @@ int main(void)
 					// USART_SendData(USART1, table_cp[i]);
 					printf("%c", table_cp[i]);
 				}
-
+				print_Format = table_cp[6];
 				if (table_cp[2] == 0x30)
 				{
 					AUTO_continuous_flag = 0;

@@ -86,8 +86,8 @@
 #define ADS1256_DRATE_2_5SPS    0x03
 
 
-
-#define voltDisplay 0
+extern u8 print_Format;
+#define voltDisplay print_Format
 
 
 signed int ADS1256ReadData(unsigned char channel);
