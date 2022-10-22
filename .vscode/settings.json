@@ -3,6 +3,8 @@
     "files.associations": {
         "ADS1256.C": "cpp",
         "air32f10x.h": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "air32f10x_it.h": "c",
+        "air32f10x_usart.h": "c"
     }
 }

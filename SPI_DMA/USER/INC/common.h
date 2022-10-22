@@ -3,8 +3,8 @@
 
 #include "bitband.h"
 
-#define EN_USART_RX         //ʹ�ܴ���1�����ж�
-#define EN_USART3_RX
+#define EN_USART_RX 1         //ʹ�ܴ���1�����ж�
+// #define EN_USART3_RX
 //#define X0  	PAin(2)
 //#define Y0  	PBout(12)
 

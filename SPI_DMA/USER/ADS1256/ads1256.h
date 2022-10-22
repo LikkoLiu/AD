@@ -96,7 +96,10 @@ void ADS1256_Init(void);   //≥ı ºªØADS1256
 void Init_ADS1256_GPIO(void);
 u8 gainChoose(unsigned int volt);
 void gainChange(u8 i);
-void autoGainread();
+void autoGainread(u8 channelread);
+void un_autoGainread(u8 GAIN,u8 channelread);
+void single_autoGainread(u8 channelread);
+void single_unautoGainread(u8 channelread,u8 GAIN);
 
 #endif
 

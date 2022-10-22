@@ -255,7 +255,7 @@ void gainChange(u8 i)
 	CS_1();
 }
 
-void autoGainread()
+void autoGainread(u8 channelread)
 {
 	u8 i = 0;
 	u8 GAIN = 0;
@@ -265,7 +265,7 @@ void autoGainread()
 	float Volts;
 	gainChange(0);
 	ADS1256ReadData_raw(0 | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
-	for (i = 0; i < 8; i++)
+	for (i = 0; i < channelread; i++)
 	{
 		Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
 
@@ -274,7 +274,7 @@ void autoGainread()
 	Adc = ADS1256ReadData_raw(0 | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
 	Adc_arr[7] = Adc;
 
-	for (i = 0; i < 8; i++)
+	for (i = 0; i < channelread; i++)
 	{
 		GAIN = gainChoose(Adc_arr[i]);
 		gainChange(GAIN);
@@ -306,5 +306,138 @@ void autoGainread()
 
 		printf(" %.4fV_%dG  ", Volts, GAIN);
 	}
+	printf("\r\n");
+}
+
+void un_autoGainread(u8 GAIN,u8 channelread)
+{
+	u8 i = 0;
+	unsigned int Adc = 0;
+	signed int Voltdisplay = 0;
+	float Volts;
+	gainChange(GAIN);
+	ADS1256ReadData_raw((0 << 4) | ADS1256_MUXN_AINCOM);
+	ADS1256ReadData_raw((0 << 4) | ADS1256_MUXN_AINCOM);
+	for (i = 1; i <= channelread; i++)
+	{
+		Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+		if (Adc > 0x7FFFFF) // if MSB=1,
+			Voltdisplay = (signed int)(Adc - 0x1000000);
+		else
+			Voltdisplay = (signed int)(Adc);
+		switch (GAIN)
+		{
+		case 0:
+			Volts = Voltdisplay * 0.000000598;
+			break;
+		case 1:
+			Volts = Voltdisplay * 0.000000298;
+			break;
+		case 2:
+			Volts = Voltdisplay * 0.000000149;
+			break;
+		case 3:
+			Volts = Voltdisplay * 0.000000075;
+			break;
+
+		default:
+			printf("ERROR");
+		}
+		if (i > 0)
+			printf(" %.4fV_%dG  ", Volts, GAIN);
+	}
+
+	printf("\r\n");
+}
+
+void single_autoGainread(u8 channelread)
+{
+	u8 i = 0;
+	u8 GAIN = 0;
+	unsigned int Adc = 0;
+	signed int Voltdisplay = 0;
+	float Volts;
+	gainChange(0);
+	ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+	Adc = ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+	GAIN = gainChoose(Adc);
+
+	gainChange(GAIN);
+	ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM);
+	for (i = 0; i < 8;i++)
+	{
+		Adc = ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+		if (Adc > 0x7FFFFF) // if MSB=1,
+			Voltdisplay = (signed int)(Adc - 0x1000000);
+		else
+			Voltdisplay = (signed int)(Adc);
+		switch (GAIN)
+		{
+		case 0:
+			Volts = Voltdisplay * 0.000000598;
+			break;
+		case 1:
+			Volts = Voltdisplay * 0.000000298;
+			break;
+		case 2:
+			Volts = Voltdisplay * 0.000000149;
+			break;
+		case 3:
+			Volts = Voltdisplay * 0.000000075;
+			break;
+
+		default:
+			printf("ERROR");
+		}
+
+		printf(" %.4fV_%dG  ", Volts, GAIN);
+	}
+
+	printf("\r\n");
+}
+
+void single_unautoGainread(u8 channelread,u8 GAIN)
+{
+	u8 i = 0;
+	unsigned int Adc = 0;
+	signed int Voltdisplay = 0;
+	float Volts;
+
+	gainChange(GAIN);
+	ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM);
+	for (i = 0; i < 8;i++)
+	{
+		Adc = ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
+
+		if (Adc > 0x7FFFFF) // if MSB=1,
+			Voltdisplay = (signed int)(Adc - 0x1000000);
+		else
+			Voltdisplay = (signed int)(Adc);
+		switch (GAIN)
+		{
+		case 0:
+			Volts = Voltdisplay * 0.000000598;
+			break;
+		case 1:
+			Volts = Voltdisplay * 0.000000298;
+			break;
+		case 2:
+			Volts = Voltdisplay * 0.000000149;
+			break;
+		case 3:
+			Volts = Voltdisplay * 0.000000075;
+			break;
+
+		default:
+			printf("ERROR");
+		}
+
+		printf(" %.4fV_%dG  ", Volts, GAIN);
+	}
+
 	printf("\r\n");
 }

@@ -7,6 +7,18 @@
 #include "ads1256.h"
 
 #define LED2 BIT_ADDR(GPIOB_ODR_Addr, 11)
+u8 AUTO_continuous_flag = 0;
+u8 AUTO_single_flag = 0;
+u8 unAUTO_continuous_flag = 0;
+u8 unAUTO_single_flag = 0;
+
+u8 SG_AUTO_continuous_flag = 0;
+u8 SG_AUTO_single_flag = 0;
+u8 SG_unAUTO_continuous_flag = 0;
+u8 SG_unAUTO_single_flag = 0;
+
+u8 unAUTO_gain_sta = 0;
+u8 channel_sta = 8;
 
 // PA9  -----> Txd1
 // PA10 -----> Rxd1
@@ -23,6 +35,10 @@
 
 int main(void)
 {
+	extern u8 table_cp[9];
+	extern u8 table_data[9];
+	u8 table_sum = 0;
+	int i;
 
 	SystemConfiguration();		  //系统初始化
 	USART_Config(USART1, 115200); //串口1初始化，波特率 115200
@@ -33,6 +49,120 @@ int main(void)
 	while (1)
 	{
 		LED2 = !LED2_READ; //指示灯闪烁
+
+		/***************@@@@@ 串口接收校验 @@@@*******************/
+		if (table_cp[0] == 0x2c) //如果数组第一个十六进制数据是0X2C则进行
+		{
+			//原始数据（十六进制数据）是2C E4 04 00 00 AD 01 23 FC
+			table_sum = 0;
+			for (i = 0; i < 8; i++)
+			{
+				// USART_SendData(USART1, table_cp[i]);
+				table_sum += table_cp[i];
+			}
+			if (table_sum == table_cp[8])
+			{
+				for (i = 0; i < 9; i++)
+				{
+					// USART_SendData(USART1, table_cp[i]);
+					printf("%c", table_cp[i]);
+				}
+
+				if (table_cp[2] == 0x30)
+				{
+					AUTO_continuous_flag = 0;
+					unAUTO_continuous_flag = 0;
+
+					SG_AUTO_continuous_flag = 0;
+					SG_unAUTO_continuous_flag = 0;
+				}
+
+				else if (table_cp[2] == 0x31)
+				{
+					switch (table_cp[3])
+					{
+					case 0x31:
+						unAUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 0;
+						SG_unAUTO_continuous_flag = 0;
+						AUTO_continuous_flag = 1;
+						channel_sta = table_cp[4];
+						break;
+					case 0x32:
+						AUTO_continuous_flag = 0;
+						unAUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 0;
+						SG_unAUTO_continuous_flag = 0;
+						AUTO_single_flag = 1;
+						channel_sta = table_cp[4];
+						break;
+					case 0x33:
+						AUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 0;
+						SG_unAUTO_continuous_flag = 0;
+						unAUTO_continuous_flag = 1;
+						unAUTO_gain_sta = table_cp[5];
+						channel_sta = table_cp[4];
+						break;
+					case 0x34:
+						AUTO_continuous_flag = 0;
+						unAUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 0;
+						SG_unAUTO_continuous_flag = 0;
+						unAUTO_single_flag = 1;
+						unAUTO_gain_sta = table_cp[5];
+						channel_sta = table_cp[4];
+						break;
+					default:
+						break;
+					}
+				}
+
+				else if (table_cp[2] == 0x32)
+				{
+					switch (table_cp[3])
+					{
+					case 0x31:
+						unAUTO_continuous_flag = 0;
+						AUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 1;
+						SG_unAUTO_continuous_flag = 0;
+						channel_sta = table_cp[4];
+						break;
+					case 0x32:
+						AUTO_continuous_flag = 0;
+						unAUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 0;
+						SG_unAUTO_continuous_flag = 0;
+						SG_AUTO_single_flag = 1;
+						channel_sta = table_cp[4];
+						break;
+					case 0x33:
+						AUTO_continuous_flag = 0;
+						unAUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 0;
+						SG_unAUTO_continuous_flag = 1;
+						unAUTO_gain_sta = table_cp[5];
+						channel_sta = table_cp[4];
+						break;
+					case 0x34:
+						AUTO_continuous_flag = 0;
+						unAUTO_continuous_flag = 0;
+						SG_AUTO_continuous_flag = 0;
+						SG_unAUTO_continuous_flag = 0;
+						SG_unAUTO_single_flag = 1;
+						unAUTO_gain_sta = table_cp[5];
+						channel_sta = table_cp[4];
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			memset(table_cp, 0, 9); //在使用数组table_cp时清空
+			memset(table_data, 0, 9);
+		}
+		/********************************************************/
 
 		/********************************************************/
 		/*************************test***************************/
@@ -77,14 +207,33 @@ int main(void)
 			if (i == 7)
 				printf("\r\n");
 		}
-
 #endif
 		/********************************************************/
 		/********************************************************/
 		/********************************************************/
 
 #if 1
-		autoGainread();
+		if (AUTO_continuous_flag == 1 || AUTO_single_flag == 1)
+		{
+			autoGainread(channel_sta);
+			AUTO_single_flag = 0;
+		}
+		if (unAUTO_continuous_flag == 1 || unAUTO_single_flag == 1)
+		{
+			un_autoGainread(unAUTO_gain_sta,channel_sta);
+			unAUTO_single_flag = 0;
+		}
+
+		if (SG_AUTO_continuous_flag == 1 || SG_AUTO_single_flag == 1)
+		{
+			single_autoGainread(channel_sta);
+			SG_AUTO_single_flag = 0;
+		}
+		if (SG_unAUTO_continuous_flag == 1 || SG_unAUTO_single_flag == 1)
+		{
+			single_unautoGainread(channel_sta,unAUTO_gain_sta);
+			SG_unAUTO_single_flag = 0;
+		}
 #endif
 	}
 }

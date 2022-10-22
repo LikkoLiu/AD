@@ -81,7 +81,7 @@ void NVIC_Configuration(void)
 	NVIC_InitTypeDef NVIC_InitStructure;
 
 	/*¥Æø⁄USART1÷–∂œ≈‰÷√ */
-#ifdef EN_USART_RX
+#if EN_USART_RX
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
