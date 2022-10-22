@@ -280,7 +280,7 @@ void autoGainread(u8 channelread)
 		gainChange(GAIN);
 		ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM);
 		Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
-
+#if voltDisplay
 		if (Adc > 0x7FFFFF) // if MSB=1,
 			Voltdisplay = (signed int)(Adc - 0x1000000);
 		else
@@ -305,11 +305,16 @@ void autoGainread(u8 channelread)
 		}
 
 		printf(" %.4fV_%dG  ", Volts, GAIN);
+#else
+		hex_printf(Adc, i+1, GAIN);
+#endif
 	}
+#if voltDisplay
 	printf("\r\n");
+#endif
 }
 
-void un_autoGainread(u8 GAIN,u8 channelread)
+void un_autoGainread(u8 GAIN, u8 channelread)
 {
 	u8 i = 0;
 	unsigned int Adc = 0;
@@ -322,6 +327,7 @@ void un_autoGainread(u8 GAIN,u8 channelread)
 	{
 		Adc = ADS1256ReadData_raw((i << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
 
+#if voltDisplay
 		if (Adc > 0x7FFFFF) // if MSB=1,
 			Voltdisplay = (signed int)(Adc - 0x1000000);
 		else
@@ -340,15 +346,17 @@ void un_autoGainread(u8 GAIN,u8 channelread)
 		case 3:
 			Volts = Voltdisplay * 0.000000075;
 			break;
-
-		default:
-			printf("ERROR");
 		}
+
 		if (i > 0)
 			printf(" %.4fV_%dG  ", Volts, GAIN);
+#else
+		hex_printf(Adc, i, GAIN);
+#endif
 	}
-
+#if voltDisplay
 	printf("\r\n");
+#endif
 }
 
 void single_autoGainread(u8 channelread)
@@ -367,10 +375,10 @@ void single_autoGainread(u8 channelread)
 
 	gainChange(GAIN);
 	ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM);
-	for (i = 0; i < 8;i++)
+	for (i = 0; i < 8; i++)
 	{
 		Adc = ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
-
+#if voltDisplay
 		if (Adc > 0x7FFFFF) // if MSB=1,
 			Voltdisplay = (signed int)(Adc - 0x1000000);
 		else
@@ -395,12 +403,16 @@ void single_autoGainread(u8 channelread)
 		}
 
 		printf(" %.4fV_%dG  ", Volts, GAIN);
+#else
+		hex_printf(Adc, channelread, GAIN);
+#endif
 	}
-
+#if voltDisplay
 	printf("\r\n");
+#endif
 }
 
-void single_unautoGainread(u8 channelread,u8 GAIN)
+void single_unautoGainread(u8 channelread, u8 GAIN)
 {
 	u8 i = 0;
 	unsigned int Adc = 0;
@@ -409,10 +421,10 @@ void single_unautoGainread(u8 channelread,u8 GAIN)
 
 	gainChange(GAIN);
 	ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM);
-	for (i = 0; i < 8;i++)
+	for (i = 0; i < 8; i++)
 	{
 		Adc = ADS1256ReadData_raw(((channelread - 1) << 4) | ADS1256_MUXN_AINCOM); // 相当于 ( ADS1256_MUXP_AIN0 | ADS1256_MUXN_AINCOM);
-
+#if voltDisplay
 		if (Adc > 0x7FFFFF) // if MSB=1,
 			Voltdisplay = (signed int)(Adc - 0x1000000);
 		else
@@ -437,7 +449,31 @@ void single_unautoGainread(u8 channelread,u8 GAIN)
 		}
 
 		printf(" %.4fV_%dG  ", Volts, GAIN);
+#else
+		hex_printf(Adc, channelread, GAIN);
+#endif
 	}
-
+#if voltDisplay
 	printf("\r\n");
+#endif
+}
+
+void hex_printf(unsigned int val, u8 chval, u8 gainval)
+{
+	u8 hexSendBuff[5];
+	u8 i;
+	hexSendBuff[0] = (0xff0000 & val) >> 16;
+	hexSendBuff[1] = (0xff00 & val) >> 8;
+	hexSendBuff[2] = (0xff & val);
+	hexSendBuff[3] = chval << 4;
+	hexSendBuff[3] += gainval;
+	for (i = 0; i < 4; i++)
+	{
+		hexSendBuff[4] += hexSendBuff[i];
+	}
+	for (i = 0; i < 5; i++)
+	{
+		// USART_SendData(USART1, table_cp[i]);
+		printf("%c", hexSendBuff[i]);
+	}
 }

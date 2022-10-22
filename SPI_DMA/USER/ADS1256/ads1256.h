@@ -87,7 +87,7 @@
 
 
 
-#define voltDisplay 1
+#define voltDisplay 0
 
 
 signed int ADS1256ReadData(unsigned char channel);
@@ -100,6 +100,7 @@ void autoGainread(u8 channelread);
 void un_autoGainread(u8 GAIN,u8 channelread);
 void single_autoGainread(u8 channelread);
 void single_unautoGainread(u8 channelread,u8 GAIN);
+void hex_printf(unsigned int val, u8 chval, u8 gainval);
 
 #endif
 
