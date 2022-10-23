@@ -219,8 +219,10 @@ u8 gainChoose(unsigned int volt)
 			gainval = 1;
 		else if (volt <= 1677721 && volt > 838860)
 			gainval = 2;
-		else
+		else if (val <= 838860 && val > 419430)
 			gainval = 3;
+		else
+			gainval = 4;
 		// printf(" @ GAIN === %d\r\n  ",gainval);
 	}
 
@@ -233,8 +235,10 @@ u8 gainChoose(unsigned int volt)
 			gainval = 1;
 		else if (val >= -1677721 && val < -838860)
 			gainval = 2;
-		else
+		else if (val >= -838860 && val < -419430)
 			gainval = 3;
+		else
+			gainval = 4;
 		// printf(" @ GAIN === %d\r\n  ",gainval);
 	}
 
@@ -298,7 +302,10 @@ if (voltDisplay)
 			Volts = Voltdisplay * 0.000000149;
 			break;
 		case 3:
-			Volts = Voltdisplay * 0.000000075;
+			Volts = Voltdisplay * 0.0000000745;
+			break;
+		case 4:
+			Volts = Voltdisplay * 0.0000000372;
 			break;
 
 		default:
@@ -347,7 +354,10 @@ if (voltDisplay)
 			Volts = Voltdisplay * 0.000000149;
 			break;
 		case 3:
-			Volts = Voltdisplay * 0.000000075;
+			Volts = Voltdisplay * 0.0000000745;
+			break;
+		case 4:
+			Volts = Voltdisplay * 0.0000000372;
 			break;
 		}
 
@@ -400,7 +410,10 @@ if (voltDisplay)
 			Volts = Voltdisplay * 0.000000149;
 			break;
 		case 3:
-			Volts = Voltdisplay * 0.000000075;
+			Volts = Voltdisplay * 0.0000000745;
+			break;
+		case 4:
+			Volts = Voltdisplay * 0.0000000372;
 			break;
 
 		default:
@@ -448,7 +461,10 @@ if (voltDisplay)
 			Volts = Voltdisplay * 0.000000149;
 			break;
 		case 3:
-			Volts = Voltdisplay * 0.000000075;
+			Volts = Voltdisplay * 0.0000000745;
+			break;
+		case 4:
+			Volts = Voltdisplay * 0.0000000372;
 			break;
 
 		default:
