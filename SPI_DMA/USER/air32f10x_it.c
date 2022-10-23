@@ -24,6 +24,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "air32f10x_it.h"
 #include "common.h"
+#include "timer.h"
 
 void NMI_Handler(void)
 {

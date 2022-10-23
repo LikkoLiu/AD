@@ -407,6 +407,11 @@
               <FileType>1</FileType>
               <FilePath>.\SRC\systemconfig.c</FilePath>
             </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SRC\timer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -479,13 +484,23 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>::Device</GroupName>
+        </Group>
       </Groups>
     </Target>
   </Targets>
 
   <RTE>
     <apis/>
-    <components/>
+    <components>
+      <component Cclass="Device" Cgroup="StdPeriph Drivers" Csub="TIM" Cvendor="Keil" Cversion="1.0.0" condition="AIR32F1xx STDPERIPH RCC">
+        <package name="AIR32F103_DFP" schemaVersion="1.2" url="https://luatos.com/t/air32f103/" vendor="Keil" version="1.0.6"/>
+        <targetInfos>
+          <targetInfo name="SPI"/>
+        </targetInfos>
+      </component>
+    </components>
     <files/>
   </RTE>
 

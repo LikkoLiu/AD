@@ -5,6 +5,9 @@
         "air32f10x.h": "c",
         "common.h": "c",
         "air32f10x_it.h": "c",
-        "air32f10x_usart.h": "c"
+        "air32f10x_usart.h": "c",
+        "timer.h": "c",
+        "system_air32f10x.h": "c",
+        "core_cm3.h": "c"
     }
 }

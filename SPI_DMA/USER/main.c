@@ -5,6 +5,7 @@
 #include "systemconfig.h"
 #include "common.h"
 #include "ads1256.h"
+#include "timer.h"
 
 #define LED2 BIT_ADDR(GPIOB_ODR_Addr, 11)
 u8 AUTO_continuous_flag = 0;
@@ -24,6 +25,7 @@ u8 print_Format;
 // PA9  -----> Txd1
 // PA10 -----> Rxd1
 // PB3 -----> KeyIO
+// PA6 -----> PWMIO
 //***************************
 //				Pin assign
 //			STM32	 	 ADS1256
@@ -46,6 +48,7 @@ int main(void)
 	Init_ADS1256_GPIO();		  //≥ı ºªØADS1256 GPIOπ‹Ω≈
 	Delay_ms(50);
 	ADS1256_Init();
+	GENERAL_TIM_Init();
 	// printf("%c",0xaa);
 	while (1)
 	{
