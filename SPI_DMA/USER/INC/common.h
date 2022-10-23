@@ -8,14 +8,14 @@
 //#define X0  	PAin(2)
 //#define Y0  	PBout(12)
 
-// #define LED1		BIT_ADDR(GPIOB_ODR_Addr,0)
-// #define LED1_READ	BIT_ADDR(GPIOB_IDR_Addr,0)
+#define LED1		BIT_ADDR(GPIOB_ODR_Addr,2)
+#define LED1_READ	BIT_ADDR(GPIOB_IDR_Addr,2)
 
 #define LED2		BIT_ADDR(GPIOB_ODR_Addr,11)
 #define LED2_READ	BIT_ADDR(GPIOB_IDR_Addr,11)
 
-#define KEY			BIT_ADDR(GPIOB_0DR_Addr,3)
-#define KEY_READ	BIT_ADDR(GPIOB_IDR_Addr,3)
+#define KEY			BIT_ADDR(GPIOB_ODR_Addr,9)
+#define KEY_READ	BIT_ADDR(GPIOB_IDR_Addr,9)
 
 
 

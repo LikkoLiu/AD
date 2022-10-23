@@ -25,6 +25,8 @@
 
 #define CS_0() GPIO_ResetBits(PORT_CS, PIN_CS);
 #define CS_1() GPIO_SetBits(PORT_CS, PIN_CS);
+#define KEY_0() GPIO_ResetBits(PORT_CS, GPIO_Pin_9);
+#define KEY_1() GPIO_SetBits(PORT_CS, GPIO_Pin_9);
 #define ADS1256_DRDY (PORT_DRDY->IDR & PIN_DRDY)
 
 void SPI2_Init(void)
@@ -63,6 +65,12 @@ void Init_ADS1256_GPIO(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_DRDY, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	KEY_0();
 
 	GPIO_InitStructure.GPIO_Pin = PIN_DRDY;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;

@@ -8,6 +8,8 @@
 #include "timer.h"
 
 #define LED2 BIT_ADDR(GPIOB_ODR_Addr, 11)
+
+// #define LED1 BIT_ADDR(GPIOB_ODR_Addr, 2)
 u8 AUTO_continuous_flag = 0;
 u8 AUTO_single_flag = 0;
 u8 unAUTO_continuous_flag = 0;
@@ -36,6 +38,8 @@ u8 print_Format;
 //		GPIOB_Pin_15 --- DIN
 //***************************
 
+//git库地址：https://github.com/babala-ljj/AD
+
 int main(void)
 {
 	extern u8 table_cp[9];
@@ -48,7 +52,7 @@ int main(void)
 	Init_ADS1256_GPIO();		  //初始化ADS1256 GPIO管脚
 	Delay_ms(50);
 	ADS1256_Init();
-	GENERAL_TIM_Init();
+	// GENERAL_TIM_Init();
 	// printf("%c",0xaa);
 	while (1)
 	{
@@ -157,6 +161,23 @@ int main(void)
 						SG_unAUTO_single_flag = 1;
 						unAUTO_gain_sta = table_cp[5];
 						channel_sta = table_cp[4];
+						break;
+					default:
+						break;
+					}
+				}
+				else if(table_cp[2] == 0x33)
+				{
+					switch (table_cp[3])
+					{
+					case 0x00:
+						GPIO_ResetBits(GPIOB, GPIO_Pin_9);
+						break;
+					case 0x01:
+						GPIO_SetBits(GPIOB, GPIO_Pin_9);
+						break;
+					case 0x03:
+						GPIOB->ODR ^=GPIO_Pin_9;
 						break;
 					default:
 						break;
